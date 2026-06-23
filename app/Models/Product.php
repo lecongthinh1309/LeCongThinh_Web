@@ -28,4 +28,14 @@ class Product extends Model
         'description',   // BỔ SUNG THÊM: trường 'description' để đi theo đúng chuẩn file Lab 08 mẫu
         'status'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'cateid', 'cateid');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class, 'brandid', 'brandid');
+    }
 }

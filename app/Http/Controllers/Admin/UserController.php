@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\UserRequest;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -34,15 +35,9 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        // $request->validate([
-        //     'username' => 'required|max:255|unique:users,username',
-        //     'fullname' => 'required|max:255',
-        //     'email'    => 'required|email|unique:users,email',
-        //     'password' => 'required|min:6',
-        //     'phone'    => 'required',
-        // ]);
+        // Validation đã được xử lý trong UserRequest
 
         DB::table('users')->insert([
             'username'   => $request->username,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\PostRequest;
 use Illuminate\Support\Str;
 use App\Models\Post; 
 
@@ -34,7 +35,7 @@ class PostController extends Controller
         return view('admin.posts.create');
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         try {
             // Xử lý Upload Ảnh đại diện bài viết nếu có
@@ -76,7 +77,7 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(PostRequest $request, string $id)
     {
         try {
             $post = Post::find($id);

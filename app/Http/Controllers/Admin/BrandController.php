@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\BrandRequest;
 use App\Models\Brand; // BẮT BUỘC: Import Model Brand để không bị lỗi không tìm thấy Class
 use Illuminate\Support\Str; // Import để xử lý tạo tự động chuỗi slug từ tên thương hiệu
 
@@ -32,13 +33,15 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BrandRequest $request)
     {
+        // Validation đã được xử lý trong BrandRequest
+
         try {
             Brand::create([
                 'brandname' => $request->brandname,
                 'slug'      => $request->slug ? Str::slug($request->slug) : Str::slug($request->brandname),
-                'status'    => $request->status ?? 1,
+                'status'    => $request->status,
             ]);
 
             return redirect()
@@ -79,8 +82,9 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(BrandRequest $request, string $id)
     {
+       
         try {
             // THAY ĐỔI: Sử dụng where() tìm theo brandid thay vì find() tìm theo id mặc định
             $brand = Brand::where('brandid', $id)->first();
@@ -88,7 +92,7 @@ class BrandController extends Controller
             if (!$brand) {
                 return redirect()
                     ->route('admin.brands.index')
-                    ->with('error', 'Thương hiệu không tồn tại');
+                    ->with('error', 'Cập nhật thương hiệu thất bại');
             }
 
             $brand->update([

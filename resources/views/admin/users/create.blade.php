@@ -3,6 +3,21 @@
 @section('content')
 <div class="card p-4 shadow-sm" style="max-width: 600px; margin: 0 auto;">
     <h3 class="mb-4 text-primary text-uppercase fw-bold">THÊM TÀI KHOẢN MỚI</h3>
+    {{-- Hiển thị tất cả lỗi Validation --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
     <form action="{{ route('admin.users.store') }}" method="POST">
         @csrf
         <div class="mb-3">
@@ -43,9 +58,13 @@
         <div class="mb-3">
             <label class="form-label fw-bold">Trạng thái tài khoản</label>
             <select name="status" class="form-select">
-                <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Kích hoạt (Hoạt động)</option>
-                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Tạm khóa</option>
+                <option value="">-- Chọn trạng thái --</option>
+                <option value="1" {{ old('status') === '1' ? 'selected' : '' }}>Kích hoạt (Hoạt động)</option>
+                <option value="0" {{ old('status') === '0' ? 'selected' : '' }}>Tạm khóa</option>
             </select>
+            @error('status')
+                <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
         </div>
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary px-4">Lưu lại</button>

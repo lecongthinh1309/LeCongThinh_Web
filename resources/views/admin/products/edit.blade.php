@@ -4,7 +4,17 @@
 <div class="border rounded bg-white p-4 shadow-sm" style="max-width: 700px; margin: 0 auto;">
     <h3 class="mb-4">Sửa sản phẩm</h3>
 
-    {{-- Hiển thị lỗi từ session flash --}}
+    {{-- Hiển thị tất cả lỗi Validation --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if(session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
@@ -13,14 +23,21 @@
 
     <form action="{{ route('admin.products.update', $product->id) }}" method="POST">
         @csrf
-        @method('PUT') <div class="mb-3">
+        @method('PUT')
+        <div class="mb-3">
             <label class="form-label">Tên sản phẩm</label>
             <input type="text" name="productname" class="form-control" value="{{ old('productname', $product->productname) }}" required>
+            @error('productname')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
         
         <div class="mb-3">
             <label class="form-label">Slug</label>
             <input type="text" name="slug" class="form-control" value="{{ old('slug', $product->slug) }}">
+            @error('slug')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="row">
@@ -52,10 +69,16 @@
             <div class="col-md-6 mb-3">
                 <label class="form-label">Giá</label>
                 <input type="number" name="price" class="form-control" value="{{ old('price', $product->price) }}" required>
+                @error('price')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Giá khuyến mãi</label>
                 <input type="number" name="pricediscount" class="form-control" value="{{ old('pricediscount', $product->pricediscount) }}">
+                @error('pricediscount')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 

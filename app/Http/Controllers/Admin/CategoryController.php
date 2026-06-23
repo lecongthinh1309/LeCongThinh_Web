@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\CategoryRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str; // Cần thiết để dùng Str::slug
 use App\Models\Category;
@@ -31,8 +32,10 @@ class CategoryController extends Controller
         return view('admin.categories.create');
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
+        // Validation đã được xử lý trong CategoryRequest
+
         try {
             Category::create([
                 'catename' => $request->catename,
@@ -72,7 +75,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryRequest $request, string $id)
    {
         try {
             $category = Category::find($id);
