@@ -17,6 +17,7 @@
         <tr>
             <th>STT</th>
             <th>Mã danh mục</th>
+            <th>Hình ảnh</th>
             <th>Tên danh mục</th>
             <th>Slug</th>
             <th>Trạng thái</th>
@@ -28,6 +29,11 @@
         <tr>
             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $index + 1 }}</td>
             <td>{{ $item->cateid }}</td>
+            <td>
+                @if ($item->image)
+                    <img src="{{ asset('storage/categories/' . $item->image) }}" width="80" class="img-thumbnail" alt="{{ $item->catename }}">
+                @endif
+            </td>
             <td>{{ $item->catename }}</td>
             <td>{{ $item->slug }}</td>
             <td>

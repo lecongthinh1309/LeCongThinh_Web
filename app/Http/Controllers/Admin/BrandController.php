@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\BrandRequest;
-use App\Models\Brand; // BẮT BUỘC: Import Model Brand để không bị lỗi không tìm thấy Class
-use Illuminate\Support\Str; // Import để xử lý tạo tự động chuỗi slug từ tên thương hiệu
+use App\Models\Brand;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BrandController extends Controller
 {
@@ -35,13 +36,26 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
-        // Validation đã được xử lý trong BrandRequest
 
         try {
+            // upload hình ảnh (nếu có)
+            $fileName = null;
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $fileName = Str::slug($request->brandname)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                // hình ảnh được lưu vào thư mục storage/app/public/brands
+                $file->storeAs('brands', $fileName, 'public');
+            }
+
+            // thực hiện thêm dữ liệu
             Brand::create([
                 'brandname' => $request->brandname,
                 'slug'      => $request->slug ? Str::slug($request->slug) : Str::slug($request->brandname),
                 'status'    => $request->status,
+                'description' => $request->description,
+                'image'     => $fileName
             ]);
 
             return redirect()
@@ -84,30 +98,41 @@ class BrandController extends Controller
      */
     public function update(BrandRequest $request, string $id)
     {
-       
+
         try {
-            // THAY ĐỔI: Sử dụng where() tìm theo brandid thay vì find() tìm theo id mặc định
-            $brand = Brand::where('brandid', $id)->first();
+            // Tìm brand theo id
+            $brand = Brand::findOrFail($id);
+            // Có chọn hình ảnh mới
+            // Giữ tên hình ảnh cũ
+            $fileName = $brand->image;
+            if ($request->hasFile('img')) {
+                // Xóa hình ảnh cũ
+                if ($fileName) {
+                    Storage::disk('public')->delete('brands/' . $brand->image);
+                }
+                // Upload hình ảnh mới
+                $file = $request->file('img');
+                $fileName = Str::slug($request->brandname)
 
-            if (!$brand) {
-                return redirect()
-                    ->route('admin.brands.index')
-                    ->with('error', 'Cập nhật thương hiệu thất bại');
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('brands', $fileName, 'public');
             }
-
             $brand->update([
                 'brandname' => $request->brandname,
-                'slug'      => $request->slug ? Str::slug($request->slug) : Str::slug($request->brandname),
-                'status'    => $request->status ?? 1,
+                'slug' => $request->slug,
+                'status' => $request->status,
+                'description' => $request->description,
+                'image' => $fileName,
             ]);
-
             return redirect()
                 ->route('admin.brands.index')
-                ->with('success', 'Cập nhật thương hiệu thành công');
+                ->with('success', 'Cập nhật thành công.');
         } catch (\Exception $e) {
-            return back()
+            return redirect()
+                ->back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', 'Cập nhật thất bại.');
         }
     }
 

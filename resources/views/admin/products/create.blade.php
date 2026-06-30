@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.products.store') }}" method="POST">
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
         <div class="mb-3">
@@ -84,13 +84,37 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold d-block">Trạng thái</label>
-            <input type="radio" class="btn-check" name="status" id="active" value="1" {{ old('status') === '1' ? 'checked' : '' }}>
+            <input type="radio" class="btn-check" name="status" id="active" value="1" 
+            {{ old('status') === '1' ? 'checked' : '' }}>
             <label class="btn btn-outline-success" for="active">Hiển thị</label>
 
-            <input type="radio" class="btn-check" name="status" id="inactive" value="0" {{ old('status') === '0' ? 'checked' : '' }}>
+            <input type="radio" class="btn-check" name="status" id="inactive" value="0" 
+            {{ old('status') === '0' ? 'checked' : '' }}>
             <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
             {{-- hiển thị lỗi cho trường status --}}
             @error('status')
+                <span class="text-danger">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+
+        <div class="mb-3 img-group">
+            <label class="form-label fw-bold">Hình ảnh chính</label>
+            <input type="file" name="img" class="form-control img-input">
+            <div class="img-preview mt-2"></div>
+            @error('img')
+                <span class="text-danger">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+
+        <div class="mb-3 img-group">
+            <label class="form-label fw-bold">Hình ảnh phụ</label>
+            <input type="file" name="imgs[]" class="form-control img-input" multiple>
+            <div class="img-preview mt-2"></div>
+            @error('imgs')
                 <span class="text-danger">
                     {{ $message }}
                 </span>

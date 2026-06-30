@@ -19,7 +19,7 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <form action="{{ route('admin.brands.update', $brand->brandid) }}" method="POST">
+    <form action="{{ route('admin.brands.update', $brand->brandid) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="mb-3">
@@ -33,6 +33,18 @@
             <label class="form-label fw-bold">Slug</label>
             <input type="text" name="slug" class="form-control" value="{{ old('slug', $brand->slug) }}">
             @error('slug')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="mb-3 img-group">
+            <label class="form-label fw-bold">Hình ảnh</label>
+            <input type="file" name="img" class="form-control img-input">
+            <div class="img-preview mt-2">
+                @if($brand->image)
+                    <img src="{{ asset('storage/brands/' . $brand->image) }}" alt="{{ $brand->brandname }}" class="img-thumbnail" width="150">
+                @endif
+            </div>
+            @error('img')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>

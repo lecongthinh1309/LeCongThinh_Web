@@ -20,7 +20,7 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <form action="{{ route('admin.categories.store') }}" method="POST">
+    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label class="form-label fw-bold">Tên danh mục</label>
@@ -37,6 +37,16 @@
             <input type="text" name="slug" class="form-control" value="{{ old('slug') }}">
             {{-- hiển thị lỗi cho trường slug --}}
             @error('slug')
+                <span class="text-danger">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+        <div class="mb-3 img-group">
+            <label class="form-label fw-bold">Hình ảnh</label>
+            <input type="file" name="img" class="form-control img-input">
+            <div class="img-preview mt-2"></div>
+            @error('img')
                 <span class="text-danger">
                     {{ $message }}
                 </span>

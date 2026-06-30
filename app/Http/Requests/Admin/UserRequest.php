@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -18,7 +19,7 @@ class UserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, 
      */
     public function rules(): array
     {
@@ -28,7 +29,7 @@ class UserRequest extends FormRequest
             'username' => [
                 'required',
                 'max:30',
-                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id),
+                Rule::unique('users', 'username')->ignore($id),
             ],
             'fullname' => [
                 'required',
@@ -38,12 +39,12 @@ class UserRequest extends FormRequest
                 'required',
                 'email',
                 'max:50',
-                \Illuminate\Validation\Rule::unique('users', 'email')->ignore($id),
+                Rule::unique('users', 'email')->ignore($id),
             ],
             'phone' => [
                 'required',
                 'max:20',
-                \Illuminate\Validation\Rule::unique('users', 'phone')->ignore($id),
+                Rule::unique('users', 'phone')->ignore($id),
             ],
             'password' => [
                 $id ? 'nullable' : 'required',

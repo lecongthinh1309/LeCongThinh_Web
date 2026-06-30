@@ -39,6 +39,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('brands', BrandController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
+    Route::delete('product-images/{id}', [ProductController::class, 'destroyImage'])->name('products.destroyImage');
     Route::resource('posts', PostController::class);
     
 });

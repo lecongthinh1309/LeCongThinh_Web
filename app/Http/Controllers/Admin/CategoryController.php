@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Admin\CategoryRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str; // Cần thiết để dùng Str::slug
+use Illuminate\Support\Facades\Storage; // Import Storage để xóa ảnh
 use App\Models\Category;
 
 
@@ -37,10 +38,21 @@ class CategoryController extends Controller
         // Validation đã được xử lý trong CategoryRequest
 
         try {
+            // upload hình ảnh (nếu có)
+            $fileName = null;
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $fileName = Str::slug($request->catename)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('categories', $fileName, 'public');
+            }
+
             Category::create([
                 'catename' => $request->catename,
                 'slug'     => $request->slug ? Str::slug($request->slug) : Str::slug($request->catename),
                 'status'   => $request->status ?? 1,
+                'image'    => $fileName
             ]);
 
             return redirect()
@@ -86,10 +98,26 @@ class CategoryController extends Controller
                     ->with('error', 'Danh mục không tồn tại');
             }
 
+            // Có chọn hình ảnh mới
+            $fileName = $category->image;
+            if ($request->hasFile('img')) {
+                // Xóa hình ảnh cũ
+                if ($fileName) {
+                    Storage::disk('public')->delete('categories/' . $category->image);
+                }
+                // Upload hình ảnh mới
+                $file = $request->file('img');
+                $fileName = Str::slug($request->catename)
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('categories', $fileName, 'public');
+            }
+
             $category->update([
                 'catename' => $request->catename,
                 'slug'     => $request->slug ? Str::slug($request->slug) : Str::slug($request->catename),
                 'status'   => $request->status ?? 1,
+                'image'    => $fileName,
             ]);
 
             return redirect()

@@ -44,6 +44,10 @@
 
     {{-- CDN Bootstrap JavaScript --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- nhúng file preview-image.js --}}
+    <script src="{{ asset('js/preview-image.js') }}"></script>
+    
+    @yield('scripts')
 </body>
 
 </html>

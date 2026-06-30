@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PostRequest extends FormRequest
 {
@@ -29,14 +30,14 @@ class PostRequest extends FormRequest
                 'required',
                 'min:3',
                 'max:200',
-                \Illuminate\Validation\Rule::unique('posts', 'title')->ignore($id),
+                Rule::unique('posts', 'title')->ignore($id),
             ],
             'slug' => [
                 'nullable',
                 'min:5',
                 'max:255',
                 'regex:/^[a-z0-9\-]+$/',
-                \Illuminate\Validation\Rule::unique('posts', 'slug')->ignore($id),
+                Rule::unique('posts', 'slug')->ignore($id),
             ],
             'image' => [
                 'nullable',

@@ -17,6 +17,7 @@
         <tr>
             <th>STT</th>
             <th>Mã thương hiệu</th>
+            <th>Hình ảnh</th>
             <th>Tên thương hiệu</th>
             <th>Slug</th>
             <th>Trạng thái</th>
@@ -28,6 +29,11 @@
         <tr>
             <td>{{ ($list->currentPage() - 1) * $list->perPage() + $index + 1 }}</td>
             <td>{{ $item->brandid }}</td>
+            <td>
+                @if ($item->image)
+                    <img src="{{ asset('storage/brands/' . $item->image) }}" width="80" class="img-thumbnail" alt="{{ $item->brandname }}">
+                @endif
+            </td>
             <td>{{ $item->brandname }}</td>
             <td>{{ $item->slug }}</td>
             <td>

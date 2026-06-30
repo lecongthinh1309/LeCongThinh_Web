@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.products.update', $product->id) }}" method="POST">
+    <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="mb-3">
@@ -91,10 +91,75 @@
             <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
         </div>
 
+        <div class="mb-3 img-group">
+            <label class="form-label">Hình ảnh chính</label>
+            <input type="file" name="img" class="form-control img-input">
+            <div class="img-preview mt-2">
+                @if ($product->image)
+                    <img src="{{ asset('storage/products/' . $product->image) }}" class="img-thumbnail" width="120" alt="Main image">
+                @endif
+            </div>
+            @error('img')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="mb-3 img-group">
+            <label class="form-label">Hình ảnh phụ</label>
+            <input type="file" name="imgs[]" class="form-control img-input" multiple>
+            <div class="img-preview mt-2 d-flex flex-wrap gap-2">
+                @foreach ($product->images as $image)
+                    <div class="position-relative d-inline-block" id="product-img-{{ $image->id }}">
+                        <img src="{{ asset('storage/products/' . $image->image) }}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" alt="Extra image">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 btn-delete-img" data-id="{{ $image->id }}">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+            @error('imgs')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
             <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Quay lại</a>
         </div>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.querySelectorAll('.btn-delete-img').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (!confirm('Bạn có chắc muốn xóa ảnh này?')) return;
+        
+        let imgId = this.dataset.id;
+        let imgBlock = document.getElementById('product-img-' + imgId);
+        
+        fetch(`/admin/product-images/${imgId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                imgBlock.remove();
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi xóa ảnh.');
+        });
+    });
+});
+</script>
 @endsection
