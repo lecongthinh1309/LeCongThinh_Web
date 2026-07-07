@@ -10,18 +10,35 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        for ($i = 1; $i <= 10; $i++) {
+        // Tạo tài khoản admin cố định để dễ test đăng nhập
+        DB::table('users')->insert([
+            'fullname'   => 'Administrator',
+            'username'   => 'admin',
+            'email'      => 'admin@example.com',
+            'password'   => Hash::make('123456'), // Mã hóa bcrypt
+            'phone'      => '0900000000',
+            'address'    => 'TP. Hồ Chí Minh',
+            'gender'     => 1,
+            'birthday'   => '1990-01-01',
+            'role'       => 1, // Quản lý
+            'status'     => 1, // Kích hoạt
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Tạo thêm 9 user ngẫu nhiên
+        for ($i = 1; $i <= 9; $i++) {
             DB::table('users')->insert([
                 'fullname'   => fake()->name(),
                 'username'   => fake()->unique()->userName(),
                 'email'      => fake()->unique()->safeEmail(),
-                'password'   => md5('123456'), // Tài liệu thiết kế VARCHAR(50) nên sử dụng md5 hoặc chuỗi text thường để test nhanh phù hợp độ dài.
+                'password'   => Hash::make('123456'), // Dùng Hash::make() thay vì md5
                 'phone'      => fake()->unique()->phoneNumber(),
                 'address'    => fake()->address(),
-                'gender'     => fake()->randomElement([0, 1, 2]), // 1: Nam, 2: Nữ, 0: Khác
-                'birthday'   => fake()->date('Y-m-d', '2005-01-01'), // Ngày sinh ngẫu nhiên trước năm 2005
-                'role'       => fake()->randomElement([1, 2]), // 1: quản lý, 2: nhân viên
-                'status'     => fake()->numberBetween(0, 1), // 1: kích hoạt, 0: khóa
+                'gender'     => fake()->randomElement([0, 1, 2]),
+                'birthday'   => fake()->date('Y-m-d', '2005-01-01'),
+                'role'       => fake()->randomElement([1, 2]),
+                'status'     => fake()->numberBetween(0, 1),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
