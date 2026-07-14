@@ -60,9 +60,17 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        // Thực hiện xóa tài khoản dựa trên ID
-        DB::table('users')->where('id', $id)->delete();
+        try {
+            // Thực hiện xóa tài khoản dựa trên ID
+            DB::table('users')->where('id', $id)->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Xóa thành viên thành công!');
+            return redirect()->route('admin.users.index')->with('success', 'Xóa thành viên thành công!');
+        } catch (\Exception $e) {
+            // Lỗi 23000 thường là lỗi khóa ngoại
+            if ($e->getCode() == '23000') {
+                return redirect()->route('admin.users.index')->with('error', 'Không thể xóa thành viên này vì đang có dữ liệu liên quan (ví dụ: bài viết).');
+            }
+            return redirect()->route('admin.users.index')->with('error', 'Thực hiện xóa thất bại.');
+        }
     }
 }

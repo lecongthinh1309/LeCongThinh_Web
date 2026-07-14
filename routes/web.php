@@ -56,12 +56,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
         })->name('home');
 
         // Các Route Resource (Đầy đủ chức năng CRUD)
-        Route::resource('categories', CategoryController::class);
-        Route::resource('brands', BrandController::class);
-        Route::resource('users', UserController::class);
-        Route::resource('products', ProductController::class);
-        Route::delete('product-images/{id}', [ProductController::class, 'destroyImage'])->name('products.destroyImage');
-        Route::resource('posts', PostController::class);
+        Route::middleware('roles:1')->group(function () {
+            // Hiển thị danh sách dữ liệu đã xóa mềm Soft Delete (Thùng rác)
+            Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
+            // Khôi phục
+            Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+            // Xóa vĩnh viễn
+            Route::delete('categories/{id}/forcedelete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+
+            Route::resource('categories', CategoryController::class);
+            Route::resource('brands', BrandController::class);
+            Route::resource('users', UserController::class);
+            Route::resource('products', ProductController::class);
+            Route::delete('product-images/{id}', [ProductController::class, 'destroyImage'])->name('products.destroyImage');
+            Route::resource('posts', PostController::class);
+        });
+
+        Route::resource('products', ProductController::class)->only(['index'])->middleware('roles:2');
 
     });
 });
