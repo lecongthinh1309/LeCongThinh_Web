@@ -9,11 +9,26 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Client\HomeController as ClientHomeController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController;
 
-// --- Giao diện người dùng công khai ---
-Route::get('/', function () {
-    return view('welcome');
-});
+// --- Giao diện người dùng (CLIENT) ---
+Route::get('/', [ClientHomeController::class, 'index'])->name('home');
+
+// Sản phẩm
+Route::get('/products/{slug}', [ClientProductController::class, 'show'])->name('product.show');
+Route::get('/danh-muc/{slug}', [ClientProductController::class, 'category'])->name('product.category');
+Route::get('/thuong-hieu/{slug}', [ClientProductController::class, 'brand'])->name('product.brand');
+Route::get('/tim-kiem', [ClientProductController::class, 'search'])->name('product.search');
+
+// Giỏ hàng
+Route::get('/gio-hang', [CartController::class, 'index'])->name('cart.index');
+Route::post('/gio-hang/them', [CartController::class, 'add'])->name('cart.add');
+Route::post('/gio-hang/cap-nhat', [CartController::class, 'update'])->name('cart.update');
+Route::post('/gio-hang/xoa', [CartController::class, 'remove'])->name('cart.remove');
+Route::get('/thanh-toan', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/dat-hang', [CartController::class, 'placeOrder'])->name('cart.placeOrder');
 
 // --- Các Route Demo / Test ---
 Route::get('/demo', [DemoController::class, 'index']);
